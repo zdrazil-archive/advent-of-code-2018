@@ -19,5 +19,7 @@
     "jest": "^23.6.0",
     "prettier": "^1.15.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "ramda": "^0.26.1"
+  }
 }

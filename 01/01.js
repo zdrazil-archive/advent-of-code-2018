@@ -18,7 +18,8 @@ exports.findDuplicate = function(frequencies) {
   let duplicate = null;
 
   while (duplicate == null) {
-    for (item of frequencies) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const item of frequencies) {
       const sum = acc + Number(item);
       if (set.has(sum)) {
         duplicate = sum;

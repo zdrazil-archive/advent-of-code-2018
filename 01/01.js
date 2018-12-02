@@ -8,5 +8,26 @@ exports.calibrate = function(frequencies) {
 exports.getFrequencies = function() {
   return fs
     .readFileSync(path.resolve(__dirname, "input.txt"), "utf8")
-    .split("\n");
+    .split("\n")
+    .slice(0, -1);
+};
+
+exports.findDuplicate = function(frequencies) {
+  const set = new Set([0]);
+  let acc = 0;
+  let duplicate = null;
+
+  while (duplicate == null) {
+    for (item of frequencies) {
+      const sum = acc + Number(item);
+      if (set.has(sum)) {
+        duplicate = sum;
+        break;
+      } else {
+        acc = sum;
+      }
+      set.add(sum);
+    }
+  }
+  return duplicate;
 };

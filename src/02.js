@@ -18,3 +18,12 @@ exports.getChecksum = function(boxIds) {
   );
   return temp[0] * temp[1];
 };
+
+exports.getDifferingCharacters = function(boxIds) {
+  const result = boxIds.map(item => {
+    console.log(item);
+    return item.split("").sort((a, b) => a.localeCompare(b));
+  });
+  console.log(result);
+  return result;
+};

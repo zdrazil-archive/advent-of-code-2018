@@ -22,11 +22,11 @@ exports.getChecksum = function getChecksum(boxIds) {
 const getDifferingCharacters = (a, b) => {
   const result = a.split("").map((item, index) => {
     if (b[index] !== item) {
-      return null;
+      return [];
     }
     return item;
   });
-  return result.filter(item => item !== null).join("");
+  return R.flatten(result).join("");
 };
 
 exports.getCommonLetters = function getCommonLetters(boxIds) {

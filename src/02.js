@@ -19,45 +19,48 @@ exports.getChecksum = function getChecksum(boxIds) {
   return temp[0] * temp[1];
 };
 
-exports.getDifferingCharacters = function getDifferingCharacters(boxIds) {
-  const result = boxIds.map((item, index) =>
-    boxIds.map((innerItem, innerIndex) => {
+const getDifferingCharacters = (a, b) => {
+  const result = a.split("").map((item, index) => {
+    if (b[index] !== item) {
+      return null;
+    }
+    return item;
+  });
+  return result.filter(item => item !== null).join("");
+};
+
+exports.getCommonLetters = function getCommonLetters(boxIds) {
+  const result = boxIds.map((item, index) => {
+    const results = boxIds.map((innerItem, innerIndex) => {
       if (innerIndex === index) {
         return [];
       }
-      return R.symmetricDifference(item, innerItem);
-    })
-  );
-  console.log(result);
-  const result2 = result.map(item =>
-    item.reduce((accum, innerItem, index) => {
-      if (innerItem.length === 2) {
-        return [...accum, index];
+      const diffWord = getDifferingCharacters(item, innerItem);
+      if (diffWord.length === boxIds[0].length - 1) {
+        return diffWord;
       }
-      return accum;
-    }, [])
-  );
-  console.log(result2);
-
-  const result3 = R.uniq(
-    result2
-      .map((item, index) => {
-        // console.log(item.length);
-        const abc = "sdf";
-        if (boxIds[index] === undefined || boxIds[item] === undefined) {
-          return null;
-        }
-        return R.pair(boxIds[index], boxIds[item]);
-      })
-      .filter(item => item !== null)
-      .map(item => item.sort())
-  );
-  console.log(result3);
-  // return result3;
-  const result4 = result3
-    .map(item => R.intersection(item[0], item[1]))
-    .map(innerItem => innerItem.join(""));
-
-  console.log(result4);
-  return result4;
+      return [];
+    });
+    return results;
+  });
+  const result2 = R.flatten(result);
+  const result3 = result2[0].split("").map((item, index) => {
+    if (result2[1][index] !== item) {
+      return null;
+    }
+    return item;
+  });
+  const result4 = result3.filter(item => item !== null);
+  // console.log(result4.join(""));
+  return result4.join("");
+  // const result2 = R.unnest(result).map(item =>
+  //   item.filter(item => item !== null)
+  // );
+  // const result3 = result2.filter(item => {
+  //   const abc = "";
+  //   // console.log(item.length);
+  //   return item.length === boxIds[0].length - 1;
+  // });
+  // const result4 = R.flatten(R.uniq(result3)).join("");
+  return result2;
 };

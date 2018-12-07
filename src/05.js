@@ -7,87 +7,41 @@ function isSameCase(char1, char2) {
   return false;
 }
 
-function removeUtil(string, lastRemoved) {
-  if (string.length === 0 || string.length === 1) {
-    return string;
-  }
+function containsSameCase(string) {
+  const result = string.reduce((prev, current) => {
+    if (prev === true) {
+      return true;
+    }
+    if (prev === "") {
+      return current;
+    }
+    if (isSameCase(prev, current)) {
+      return true;
+    }
+    return current;
+  }, "");
 
-  // Remove leftmost pairs  and recur for remaining
-  // string
-  if (isSameCase(string[0], string[1])) {
-    string = R.tail(R.tail(string));
-    return removeUtil(string, string[0]);
-  }
-
-  // At this point, the first character is definitely different
-  // from its adjacent. Ignore first character and recursively
-  // remove characters from remaining string
-  const remStr = removeUtil(R.tail(string), lastRemoved);
-
-  // Check if the first character of the rem_string matches
-  // with the first character of the original string
-  if (remStr.length !== 0 && isSameCase(remStr[0], string[0])) {
-    lastRemoved = string[0];
-    return R.tail(remStr);
-  }
-
-  // If remaining string becomes empty and last removed character
-  // is same as first character of original string. This is needed
-  // for a string like "acbbcddc"
-  if (remStr.length === 0 && lastRemoved === string[0]) {
-    return remStr;
-  }
-
-  // If the two first characters of str and rem_str don't match,
-  // append first character of str before the first character of
-  // rem_str.
-  return [string[0]] + remStr;
+  return result === true;
 }
 
-function removeUtil2(string, lastRemoved) {
+function removeUtil(string, lastChar) {
   if (string.length === 0 || string.length === 1) {
     return string;
   }
 
-  // Remove leftmost same characters and recur for remaining
-  // string
-  if (string[0] === string[1]) {
-    lastRemoved = string[0];
-    while (string.length > 1 && string[0] === string[1]) {
-      string = R.tail(string);
-    }
-    string = R.tail(string);
-    return removeUtil(string, lastRemoved);
+  if (isSameCase(string[0], string[1])) {
+    return removeUtil(R.tail(R.tail(string)));
   }
-
-  // At this point, the first character is definiotely different
-  // from its adjacent. Ignore first character and recursively
-  // remove characters from remaining string
-  const remStr = removeUtil(R.tail(string), lastRemoved);
-
-  // Check if the first character of the rem_string matches
-  // with the first character of the original string
-  if (remStr.length !== 0 && remStr[0] === string[0]) {
-    lastRemoved = string[0];
-    return R.tail(remStr);
-  }
-
-  // If remaining string becomes empty and last removed character
-  // is same as first character of original string. This is needed
-  // for a string like "acbbcddc"
-  if (remStr.length === 0 && lastRemoved === string[0]) {
-    return remStr;
-  }
-
-  // If the two first characters of str and rem_str don't match,
-  // append first character of str before the first character of
-  // rem_str.
-  return [string[0]] + remStr;
+  return [string[0], ...removeUtil(R.tail(string))];
 }
 
 exports.remove = function remove(string) {
-  const lastRemoved = 0;
-  return toString(removeUtil(toList(string), lastRemoved));
+  let newString = removeUtil(toList(string));
+  while (newString !== "" && containsSameCase(newString)) {
+    newString = removeUtil(newString);
+  }
+
+  return toString(newString);
 };
 
 function toList(string) {
@@ -95,7 +49,7 @@ function toList(string) {
 }
 
 function toString(x) {
-  return x.toString();
+  return x.join("");
 }
 
 exports.reactPair = function reactPair(pairs) {

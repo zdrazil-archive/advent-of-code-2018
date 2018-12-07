@@ -15,3 +15,5 @@ console.log(polymer.remove(string4));
 const string5 = "aaaacddddcappp";
 console.log(polymer.remove(string5));
 
+const string6 = "dabAcCaCBAcCcaDA";
+console.log(polymer.remove(string6));

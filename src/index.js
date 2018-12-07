@@ -1,6 +1,7 @@
 const lib = require("./lib");
 const frequency = require("./01");
 const inventory = require("./02");
+const polymer = require("./05");
 
 console.log(`Calibrated frequency: ${frequency.calibrate(lib.getInput("01"))}`);
 
@@ -10,4 +11,8 @@ console.log(`Checksum: ${inventory.getChecksum(lib.getInput("02"))}`);
 
 console.log(
   `Common letters: ${inventory.getCommonLetters(lib.getInput("02"))}`
+);
+
+console.log(
+  `Polymer after reaction: ${polymer.react(lib.getInput("05")[0]).length}`
 );

@@ -7,3 +7,12 @@ exports.getInput = function(day) {
     .split("\n")
     .slice(0, -1);
 };
+
+exports.trampoline = fn => (...args) => {
+  let result = fn(...args);
+  while (typeof result === "function") {
+    result = result();
+  }
+
+  return result;
+};

@@ -12,18 +12,14 @@ function removeUtil(string, lastRemoved) {
     return string;
   }
 
-  // Remove leftmost same characters and recur for remaining
+  // Remove leftmost pairs  and recur for remaining
   // string
   if (isSameCase(string[0], string[1])) {
-    lastRemoved = string[0];
-    while (string.length > 1 && isSameCase(string[0], string[1])) {
-      string = R.tail(string);
-    }
-    string = R.tail(string);
-    return removeUtil(string, lastRemoved);
+    string = R.tail(R.tail(string));
+    return removeUtil(string, string[0]);
   }
 
-  // At this point, the first character is definiotely different
+  // At this point, the first character is definitely different
   // from its adjacent. Ignore first character and recursively
   // remove characters from remaining string
   const remStr = removeUtil(R.tail(string), lastRemoved);

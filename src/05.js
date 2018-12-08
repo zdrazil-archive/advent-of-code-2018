@@ -53,10 +53,10 @@ function removeReactions(string, sumString = []) {
 }
 
 exports.findShortest = function findShortest(string) {
+  const afterReactions = this.react(string);
   const alphaResults = ALPHABET.map(alphaChar => {
-    const filteredPolymer = string
-      .split("")
-      .filter(stringChar => stringChar.toLowerCase() !== alphaChar);
+    const regex = new RegExp(alphaChar, "gi");
+    const filteredPolymer = afterReactions.replace(regex, "");
     return trampoline(removeReactions)(filteredPolymer).join("");
   });
   return R.reduce(

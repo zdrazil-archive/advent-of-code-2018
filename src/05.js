@@ -1,6 +1,8 @@
 const R = require("ramda");
 
 function isSameCase(char1, char2) {
+  // console.log(char1);
+  // console.log(char2);
   if (char1 !== char2 && char1.toLowerCase() === char2.toLowerCase()) {
     return true;
   }
@@ -24,22 +26,31 @@ function containsSameCase(string) {
   return result === true;
 }
 
-function removeUtil(string, lastChar) {
-  if (string.length === 0 || string.length === 1) {
-    return string;
+function removeUtil(string, sumString = []) {
+  // console.log(string);
+  if (string.length === 0) {
+    return sumString;
+  }
+  // if (string.length === 0 || string.length === 1) {
+  // if (string.length === 1) {
+  //   return removeUtil(R.tail(string), sumString);
+  if (sumString.length >= 1 && isSameCase(R.last(sumString), R.head(string))) {
+    // if (sumString.length >= 1) {
+    // sumString[0];
+    return removeUtil(R.tail(string), R.dropLast(1, sumString));
   }
 
-  if (isSameCase(string[0], string[1])) {
-    return removeUtil(R.tail(R.tail(string)));
+  if (string.length === 2 && isSameCase(string[0], string[1])) {
+    return removeUtil(R.tail(R.tail(string)), sumString);
   }
-  return [string[0], ...removeUtil(R.tail(string))];
+  return removeUtil(R.tail(string), [...sumString, string[0]]);
 }
 
 exports.remove = function remove(string) {
-  let newString = removeUtil(toList(string));
-  while (newString !== "" && containsSameCase(newString)) {
-    newString = removeUtil(newString);
-  }
+  const newString = removeUtil(toList(string));
+  // while (newString !== "" && containsSameCase(newString)) {
+  //   newString = removeUtil(newString);
+  // }
 
   return toString(newString);
 };

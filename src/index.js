@@ -13,4 +13,6 @@ console.log(
   `Common letters: ${inventory.getCommonLetters(lib.getInput("02"))}`
 );
 
-console.log(`Polymer after reaction: ${polymer.react(lib.getInput("05")[0])}`);
+console.log(
+  `Polymer after reaction: ${polymer.react(lib.getInput("05")[0]).length}`
+);

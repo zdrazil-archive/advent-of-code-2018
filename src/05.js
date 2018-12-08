@@ -1,6 +1,35 @@
 const R = require("ramda");
 const { trampoline } = require("./lib");
 
+const ALPHABET = [
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "g",
+  "h",
+  "i",
+  "j",
+  "k",
+  "l",
+  "m",
+  "n",
+  "o",
+  "p",
+  "q",
+  "r",
+  "s",
+  "t",
+  "u",
+  "v",
+  "w",
+  "x",
+  "y",
+  "z"
+];
+
 function isSameCase(char1, char2) {
   if (char1 !== char2 && char1.toLowerCase() === char2.toLowerCase()) {
     return true;
@@ -23,6 +52,20 @@ function removeReactions(string, sumString = []) {
   return () => removeReactions(R.tail(string), [...sumString, string[0]]);
 }
 
-exports.react = function remove(string) {
+exports.findShortest = function findShortest(string) {
+  const alphaResults = ALPHABET.map(alphaChar => {
+    const filteredPolymer = string
+      .split("")
+      .filter(stringChar => stringChar.toLowerCase() !== alphaChar);
+    return trampoline(removeReactions)(filteredPolymer).join("");
+  });
+  return R.reduce(
+    R.minBy(a => (a.length ? a.length : a)),
+    Infinity,
+    alphaResults
+  );
+};
+
+exports.react = function react(string) {
   return trampoline(removeReactions)(string.split("")).join("");
 };

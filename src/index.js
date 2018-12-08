@@ -16,3 +16,9 @@ console.log(
 console.log(
   `Polymer after reaction: ${polymer.react(lib.getInput("05")[0]).length}`
 );
+
+console.log(
+  `Shortest polymer's length: ${
+    polymer.findShortest(lib.getInput("05")[0]).length
+  }`
+);

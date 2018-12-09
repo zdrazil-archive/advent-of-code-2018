@@ -1,6 +1,7 @@
 const lib = require("./lib");
 const frequency = require("./01");
 const inventory = require("./02");
+const fabric = require("./03");
 const polymer = require("./05");
 
 console.log(`Calibrated frequency: ${frequency.calibrate(lib.getInput("01"))}`);
@@ -15,6 +16,10 @@ console.log(
 
 console.log(
   `Polymer after reaction: ${polymer.react(lib.getInput("05")[0]).length}`
+);
+
+console.log(
+  `Nr. of duplicate fabric: ${fabric.getDuplicateSize(lib.getInput("03"))}`
 );
 
 console.time("findShortest");

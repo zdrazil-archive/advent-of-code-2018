@@ -1,27 +1,53 @@
 const R = require("ramda");
 
-exports.getPositions = function getPositions(startPosition, size) {
-  const left = startPosition[0];
-  const top = startPosition[1];
-  const emptyRowArray = new Array(size[0]).fill(null);
-  const emptyColArray = new Array(size[1]).fill(null);
-  // console.log(emptyRowArray);
-  const columnPositions = emptyColArray
-    .map((item, index) => {
-      // console.log(item);
-      const cde = emptyRowArray.map((innerItem, innerIndex) => {
-        const b = startPosition[0] + innerIndex;
-        const c = startPosition[1] + index;
-        // console.log([b, c]);
-        // console.log(index);
-        return [b, c];
-      }); // console.log(cde);
-      return cde;
-    })
-    .reduce((acc, item) => [...acc, ...item], []);
+// return rectangle: [x1, y1, x2, y2]
+exports.getPositions = function getPositions(start, size) {
+  return [start[0], start[1], start[0] + size[0], start[1] + size[1]];
+};
 
-  // console.log(columnPositions);
-  return columnPositions;
+const OPEN = 0;
+const CLOSE = 1;
+
+exports.getEvents = function getEvents(rectangles) {
+  const events = rectangles.reduce(
+    (acc, [x1, y1, x2, y2]) => [
+      ...acc,
+      [y1, OPEN, x1, x2],
+      [y2, CLOSE, x1, x2]
+    ],
+    []
+  );
+  return events;
+};
+
+exports.sortEvents = e => e.sort();
+
+exports.getActive = function getActive(events) {
+  const e = this.sortEvents(events);
+  const a = e.reduce((acc, curr) => {
+    console.log(acc);
+    const [y, type, x1, x2] = curr;
+    if (type === OPEN) {
+      if (acc.length === 0) {
+        return [[curr]];
+      }
+      if (R.last(acc)[0] === curr[0]) {
+        return [R.dropLast(1, acc), [...R.last(acc), curr]];
+      }
+      return [...acc, curr];
+    }
+    const matchIndex = R.findIndex(b => b[3] === curr[3] && b[4] === curr[4])(
+      R.last(acc)
+    );
+    // console.log(matchIndex);
+    // console.log(curr);
+    console.log(R.last(acc));
+    const newYRow = R.remove(matchIndex, matchIndex, R.last(acc));
+    return acc;
+    return [...R.dropLast(1, acc), newYRow];
+  }, []);
+  console.log(a);
+  return a;
 };
 
 exports.parseStartPositions = function parseStartPositions(claim) {
@@ -31,6 +57,7 @@ exports.parseStartPositions = function parseStartPositions(claim) {
     .split(",")
     .map(a => parseInt(a, 10));
 };
+
 exports.parseRectangleSize = function parseRectangleSize(claim) {
   return claim
     .split(" ")[3]

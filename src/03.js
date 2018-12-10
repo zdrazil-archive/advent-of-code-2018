@@ -22,32 +22,80 @@ exports.getEvents = function getEvents(rectangles) {
 
 exports.sortEvents = e => e.sort();
 
+const query = actives => {
+  let ans = 0;
+  let cur = -1;
+  // console.log(actives);
+  actives.forEach(([x1, x2]) => {
+    cur = R.max(cur, x1);
+    ans += R.max(0, x2 - cur);
+    cur = R.max(cur, x2);
+  });
+  return ans;
+};
+
 exports.getActive = function getActive(events) {
   const e = this.sortEvents(events);
-  const a = e.reduce((acc, curr) => {
-    console.log(acc);
-    const [y, type, x1, x2] = curr;
-    if (type === OPEN) {
-      if (acc.length === 0) {
-        return [[curr]];
+  // const eRows = groupWith((a, b) => a[0] === b[0], e);
+  const b = e.reduce(
+    (acc, curr) => {
+      const [y, type, x1, x2] = curr;
+      const { prevActive, ans, currY } = acc;
+      const newAns = ans + query(prevActive) * (y - currY);
+      let newActive = {};
+      if (type === OPEN) {
+        newActive = [...prevActive, [x1, x2]].sort();
+      } else {
+        const matchIndex = R.findIndex(a => a === [x1, x2])(prevActive);
+        // console.log(matchIndex);
+        newActive = R.remove(matchIndex, matchIndex, prevActive);
+        // console.log(newActive);
       }
-      if (R.last(acc)[0] === curr[0]) {
-        return [R.dropLast(1, acc), [...R.last(acc), curr]];
-      }
-      return [...acc, curr];
+      console.log(acc);
+      return {
+        prevActive: newActive,
+        ans: newAns,
+        currY: y
+      };
+    },
+    {
+      prevActive: [],
+      ans: 0,
+      currY: e[0][0]
     }
-    const matchIndex = R.findIndex(b => b[3] === curr[3] && b[4] === curr[4])(
-      R.last(acc)
-    );
-    // console.log(matchIndex);
-    // console.log(curr);
-    console.log(R.last(acc));
-    const newYRow = R.remove(matchIndex, matchIndex, R.last(acc));
-    return acc;
-    return [...R.dropLast(1, acc), newYRow];
-  }, []);
-  console.log(a);
-  return a;
+  );
+  console.log(b.ans);
+  return b.ans % (10 ** 9 + 7);
+
+  // const rowsCount = R.last(e)[0];
+  // const emptyRows = new Array(rowsCount).fill(null);
+  // const filledRows = emptyRows.reduce((acc, row, index) => {
+  //   const a = e.filter => (item => index ===)
+  //     , [[]]})
+
+  // console.log(emptyRows);
+  // const a = e.reduce((acc, curr) => {
+  //   console.log(acc);
+  //   const [y, type, x1, x2] = curr;
+  //   if (type === OPEN) {
+  //     if (acc.length === 0) {
+  //       return [[curr]];
+  //     }
+  //     if (R.last(acc)[0] === curr[0]) {
+  //       return [R.dropLast(1, acc), [...R.last(acc), curr]];
+  //     }
+  //     return [...acc, curr];
+  //   }
+  //   const matchIndex = R.findIndex(b => b[3] === curr[3] && b[4] === curr[4])(
+  //     R.last(acc)
+  //   );
+  //   // console.log(matchIndex);
+  //   // console.log(curr);
+  //   console.log(R.last(acc));
+  //   const newYRow = R.remove(matchIndex, matchIndex, R.last(acc));
+  //   return acc;
+  //   return [...R.dropLast(1, acc), newYRow];
+  // }, []);
 };
 
 exports.parseStartPositions = function parseStartPositions(claim) {

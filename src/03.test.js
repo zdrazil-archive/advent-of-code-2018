@@ -43,10 +43,18 @@ test("sort events", () => {
   ).toEqual([[2, 0, 3, 8], [2, 0, 3, 8], [6, 1, 3, 8], [6, 1, 3, 8]]);
 });
 
+// test("get active each y", () => {
+//   expect(
+//     fabric.getActive([[2, 0, 3, 8], [2, 0, 3, 8], [6, 1, 3, 8], [6, 1, 3, 8]])
+//   ).toEqual([[[2, 0, 3, 8], [2, 0, 3, 3]], [[6, 1, 3, 8], [6, 1, 3, 8]]]);
+// });
+
 test("get active each y", () => {
   expect(
-    fabric.getActive([[2, 0, 3, 8], [2, 0, 3, 8], [6, 1, 3, 8], [6, 1, 3, 8]])
-  ).toEqual([[[2, 0, 3, 8], [2, 0, 3, 3]], [[6, 1, 3, 8], [6, 1, 3, 8]]]);
+    fabric.getActive(
+      fabric.getEvents([[0, 0, 2, 2], [1, 0, 2, 3], [1, 0, 3, 1]])
+    )
+  ).toEqual();
 });
 
 // test("calculates number of duplicate positions", () => {

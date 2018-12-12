@@ -22,6 +22,8 @@ console.log(
   `Nr. of duplicate fabric: ${fabric.getDuplicateSize(lib.getInput("03"))}`
 );
 
+console.log(`Unique fabric: ${fabric.getUniqueClaim(lib.getInput("03"))}`);
+
 console.time("findShortest");
 console.log(
   `Shortest polymer's length: ${

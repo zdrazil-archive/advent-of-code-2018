@@ -10,10 +10,10 @@ const CLOSE = 1;
 
 exports.getEvents = function getEvents(rectangles) {
   const events = rectangles.reduce(
-    (acc, [x1, y1, x2, y2]) => [
+    (acc, [x1, y1, x2, y2, id]) => [
       ...acc,
-      [y1, OPEN, x1, x2],
-      [y2, CLOSE, x1, x2]
+      [y1, OPEN, x1, x2, id],
+      [y2, CLOSE, x1, x2, id]
     ],
     []
   );
@@ -81,7 +81,6 @@ const query = actives => {
 
 exports.getActive = function getActive(events) {
   const e = this.sortEvents(events);
-  // console.log(e);
   // const eRows = groupWith((a, b) => a[0] === b[0], e);
   const b = e.reduce(
     (acc, curr) => {
@@ -143,6 +142,31 @@ exports.getDuplicateSize = function getDuplicateSize(claims) {
   const events = this.getEvents(rectangles);
   const c = this.getActive(events);
   return c;
+};
+
+exports.getUniqueClaim = function getUniqueCLaim(claims) {
+  const rectangles = claims.map(item => {
+    const startPosition = this.parseStartPositions(item);
+    const size = this.parseRectangleSize(item);
+    return this.getPositions(startPosition, size);
+  });
+  const events = this.sortEvents(this.getEvents(rectangles));
+  const c = events.reduce(
+    (acc, curr) => {
+      const { prev, unique } = acc;
+      const newUnique = R.equals(prev, unique) ? [...unique, curr] : unique;
+      const newPrev = curr;
+      return {
+        prev: newPrev,
+        unique: newUnique
+      };
+    },
+    {
+      prev: [],
+      unique: []
+    }
+  );
+  console.log(c);
 };
 
 exports.parseClaims = function parseClaims(claims) {

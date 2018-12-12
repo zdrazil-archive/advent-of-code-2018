@@ -20,24 +20,44 @@ exports.getEvents = function getEvents(rectangles) {
   return events;
 };
 
-exports.sortEvents = e => e.sort();
+const compFunc = function(a, b) {
+  const len = a.length > b.length ? b.length : a.length;
+
+  for (let i = 0; i < len; i += 1) {
+    if (a[i] - b[i] !== 0) return a[i] - b[i];
+  }
+
+  return 0;
+};
+
+exports.sortEvents = function sortEvents(e) {
+  return e.sort(compFunc);
+};
 
 const query = actives => {
   if (actives.length === 0) {
     return 0;
   }
-  const e = actives
-    .reduce((acc, [x1, x2]) => [...acc, [x1, OPEN, x1], [x2, CLOSE, x1]], [])
-    .sort();
+  const e = this.sortEvents(
+    actives.reduce(
+      (acc, [x1, x2]) => [...acc, [x1, OPEN, x1], [x2, CLOSE, x1]],
+      []
+    )
+  );
+
+  // debugger;
   const a = e.reduce(
     (acc, curr) => {
       const [x, type, id] = curr;
       const { prevActive, ans, curX } = acc;
-      console.log(acc);
-      const newAns = ans + (prevActive.length >= 1 ? 1 : 0) * (x - curX);
+      // console.log(acc);
+      const newAns = ans + (prevActive.length >= 2 ? 1 : 0) * (x - curX);
+      if (newAns < 0) {
+        console.log(e);
+      }
       let newActive = [];
       if (type === OPEN) {
-        newActive = [...prevActive, id];
+        newActive = [...prevActive, id].sort();
       } else {
         const matchIndex = R.findIndex(R.equals(id))(prevActive);
         newActive =
@@ -55,13 +75,13 @@ const query = actives => {
       curX: e[0][0]
     }
   );
-
+  // console.log(a.ans);
   return a.ans;
 };
 
 exports.getActive = function getActive(events) {
   const e = this.sortEvents(events);
-  console.log(e);
+  // console.log(e);
   // const eRows = groupWith((a, b) => a[0] === b[0], e);
   const b = e.reduce(
     (acc, curr) => {

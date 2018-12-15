@@ -18,11 +18,10 @@ console.log(
   `Polymer after reaction: ${polymer.react(lib.getInput("05")[0]).length}`
 );
 
-console.log(
-  `Nr. of duplicate fabric: ${fabric.getDuplicateSize(lib.getInput("03"))}`
-);
+const duplicateFabric = fabric.getDuplicateSize(lib.getInput("03"));
+console.log(`Nr. of duplicate fabric: ${duplicateFabric.ans}`);
 
-console.log(`Unique fabric: ${fabric.getUniqueClaim(lib.getInput("03"))}`);
+console.log(`Unique fabric: ${duplicateFabric.uniqueRect}`);
 
 console.time("findShortest");
 console.log(

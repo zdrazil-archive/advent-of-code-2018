@@ -18,7 +18,7 @@ console.log(
   `Polymer after reaction: ${polymer.react(lib.getInput("05")[0]).length}`
 );
 
-const duplicateFabric = fabric.getDuplicateSize(lib.getInput("03"));
+const duplicateFabric = fabric.getMultipleClaims(lib.getInput("03"));
 console.log(`Nr. of duplicate fabric: ${duplicateFabric.ans}`);
 
 console.log(`Unique fabric: ${duplicateFabric.uniqueRect}`);

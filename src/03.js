@@ -1,12 +1,39 @@
 const R = require("ramda");
 
-// return rectangle: [x1, y1, x2, y2]
-exports.getPositions = function getPositions(start, size, id = 0) {
-  return [start[0], start[1], start[0] + size[0], start[1] + size[1], id];
-};
-
 const OPEN = 0;
 const CLOSE = 1;
+
+exports.parseStartPositions = function parseStartPositions(claim) {
+  return claim
+    .split(" ")[2]
+    .replace(":", "")
+    .split(",")
+    .map(a => parseInt(a, 10));
+};
+
+exports.parseRectangleSize = function parseRectangleSize(claim) {
+  return claim
+    .split(" ")[3]
+    .split("x")
+    .map(a => parseInt(a, 10));
+};
+
+exports.parseId = function parseId(claim) {
+  return claim.split(" ")[0];
+};
+
+function getPositions(start, size, id = 0) {
+  return [start[0], start[1], start[0] + size[0], start[1] + size[1], id];
+}
+
+exports.getRectangles = function getRectangles(claims) {
+  return claims.map(item => {
+    const startPosition = this.parseStartPositions(item);
+    const size = this.parseRectangleSize(item);
+    const id = this.parseId(item);
+    return getPositions(startPosition, size, id);
+  });
+};
 
 exports.getEvents = function getEvents(rectangles) {
   const events = rectangles.reduce(
@@ -20,7 +47,7 @@ exports.getEvents = function getEvents(rectangles) {
   return events;
 };
 
-const compFunc = function(a, b) {
+function compFunc(a, b) {
   const len = a.length > b.length ? b.length : a.length;
 
   for (let i = 0; i < len; i += 1) {
@@ -28,7 +55,7 @@ const compFunc = function(a, b) {
   }
 
   return 0;
-};
+}
 
 exports.sortEvents = function sortEvents(e) {
   return e.sort(compFunc);
@@ -52,16 +79,9 @@ const query = (actives, uniqueRect) => {
     (acc, curr) => {
       const [x, type, id] = curr;
       const { prevActive, ans, curX, uniqueRect } = acc;
-      // console.log(acc);
       const isOverlapping = prevActive.length >= 2;
       const newAns = ans + (isOverlapping ? 1 : 0) * (x - curX);
-      // console.log(prevActive.slice(1, 3));
-      // console.log(isOverlapping);
-      if (isOverlapping) {
-        // console.log(R.without(prevActive, uniqueRect).length);
-      }
 
-      // console.log(uniqueRect.slice(1, 3));
       const newUniqueRect = isOverlapping
         ? R.without(prevActive, uniqueRect)
         : uniqueRect;
@@ -108,16 +128,9 @@ exports.getActive = function getActive(events, claimIds) {
         newActive = [...prevActive, [x1, x2, id]].sort();
       } else {
         const matchIndex = R.findIndex(R.equals([x1, x2, id]))(prevActive);
-        // console.log(prevActive);
-        // console.log([x1, x2]);
-        // console.log(matchIndex);
-        // console.log(matchIndex);
         newActive =
           matchIndex === -1 ? prevActive : R.remove(matchIndex, 1, prevActive);
-        // console.log(newActive);
-        // console.log("---");
       }
-      // console.log(newActive);
       return {
         prevActive: newActive,
         ans: newAns,
@@ -132,73 +145,12 @@ exports.getActive = function getActive(events, claimIds) {
       uniqueRect: claimIds
     }
   );
-  // console.log(b.ans);
   return b;
 };
 
-exports.parseStartPositions = function parseStartPositions(claim) {
-  return claim
-    .split(" ")[2]
-    .replace(":", "")
-    .split(",")
-    .map(a => parseInt(a, 10));
-};
-
-exports.parseRectangleSize = function parseRectangleSize(claim) {
-  return claim
-    .split(" ")[3]
-    .split("x")
-    .map(a => parseInt(a, 10));
-};
-
-exports.parseId = function parseId(claim) {
-  return claim.split(" ")[0];
-};
-
-exports.getDuplicateSize = function getDuplicateSize(claims) {
-  const rectangles = claims.map(item => {
-    const startPosition = this.parseStartPositions(item);
-    const size = this.parseRectangleSize(item);
-    const id = this.parseId(item);
-    return this.getPositions(startPosition, size, id);
-  });
-  const claimIds = claims.map(item => this.parseId(item));
+exports.getMultipleClaims = function getDuplicateSize(claims) {
+  const rectangles = this.getRectangles(claims);
   const events = this.getEvents(rectangles);
-  const c = this.getActive(events, claimIds);
-  return c;
-};
-
-exports.getUniqueClaim = function getUniqueCLaim(claims) {
-  // const rectangles = claims.map(item => {
-  //   const startPosition = this.parseStartPositions(item);
-  //   const size = this.parseRectangleSize(item);
-  //   const id = this.parseId(item);
-  //   return this.getPositions(startPosition, size, id);
-  // });
-  // const events = this.sortEvents(this.getEvents(rectangles));
-  // const c = events.reduce(
-  //   (acc, curr) => {
-  //     const { prev, unique } = acc;
-  //     const newUnique = R.equals(prev[4], curr[4]) ? [...unique, curr] : unique;
-  //     const newPrev = curr;
-  //     return {
-  //       prev: newPrev,
-  //       unique: newUnique
-  //     };
-  //   },
-  //   {
-  //     prev: [],
-  //     unique: []
-  //   }
-  // );
-  // console.log(c);
-  return "a";
-};
-
-exports.parseClaims = function parseClaims(claims) {
-  return claims;
-};
-
-exports.getMultipleClaims = function getMultipleClaims(claims) {
-  return claims;
+  const claimIds = claims.map(item => this.parseId(item));
+  return this.getActive(events, claimIds);
 };

@@ -81,12 +81,25 @@ exports.getLargestSleeper = function(input) {
     timesheetInfo.timesheet,
     largestSleeper
   );
+  const ids = R.flatten(input)
+    .filter(a => a.includes("#"))
+    .map(a => getGuardId(a))
+    .sort();
+  const secondMostMinute = ids
+    .map(a => getMostFrequentMin(timesheetInfo.timesheet, a))
+    .sort((a, b) => b.frequency - a.frequency)[0];
+
   return {
     firstStrategy: largestSleeper * mostMinute.index,
-    secondStrategy: null
+    secondStrategy: secondMostMinute.sleeperId * secondMostMinute.index
   };
 };
+
 const largestSleeper = this.getLargestSleeper(lib.getInput("04"));
 console.log(
   `Largest sleeper by first strategy: ${largestSleeper.firstStrategy}`
+);
+
+console.log(
+  `Largest sleeper with second strategy: ${largestSleeper.secondStrategy}`
 );

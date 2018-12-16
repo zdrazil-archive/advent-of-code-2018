@@ -18,8 +18,19 @@ const getMostFrequentMin = (timesheet, sleeperId) =>
   timesheet
     .map(minute => minute.filter(id => id === sleeperId))
     .reduce(
-      (acc, cur, idx, src) => (cur.length > src[acc].length ? idx : acc),
-      0
+      (acc, cur, idx, src) =>
+        cur.length > src[acc.index].length
+          ? {
+              index: idx,
+              sleeperId,
+              frequency: cur.length
+            }
+          : acc,
+      {
+        index: 0,
+        sleeperId,
+        frequency: 0
+      }
     );
 
 exports.getLargestSleeper = function(input) {
@@ -70,7 +81,12 @@ exports.getLargestSleeper = function(input) {
     timesheetInfo.timesheet,
     largestSleeper
   );
-  return largestSleeper * mostMinute;
+  return {
+    firstStrategy: largestSleeper * mostMinute.index,
+    secondStrategy: null
+  };
 };
-
-console.log(`Largest sleeper: ${this.getLargestSleeper(lib.getInput("04"))}`);
+const largestSleeper = this.getLargestSleeper(lib.getInput("04"));
+console.log(
+  `Largest sleeper by first strategy: ${largestSleeper.firstStrategy}`
+);

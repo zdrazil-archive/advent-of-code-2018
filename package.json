@@ -11,7 +11,10 @@
   "repository": "https://github.com/zdrazil/advent-of-code-2018",
   "author": "Vladimir Zdrazil",
   "devDependencies": {
-    "eslint": "^5.9.0",
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.15",
+    "@types/ramda": "types/npm-ramda#dist",
+    "eslint": "^5.10.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-import": "^2.14.0",

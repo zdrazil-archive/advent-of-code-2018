@@ -28,14 +28,6 @@ const differentBoxIds = [
   "wvxyz"
 ];
 
-test("returns differing characters", () => {
-  expect(inventory.getDifferingCharacters(differentBoxIds)).toBe(["h", "u"]);
+test("gets common letters", () => {
+  expect(inventory.getCommonLetters(differentBoxIds)).toBe("fgij");
 });
-
-// test("returns boxes that differ by one character", () => {
-//   expect(inventory.getRightBoxes(differentBoxIds)).toBe(["fghij", "fguij"]);
-// });
-
-// test("gets common letters", () => {
-//   expect(inventory.getCommonLetters(["fghij", "fguij"])).toBe("fgij");
-// });
